@@ -345,10 +345,6 @@ export default function SignUp() {
     }
   };
 
-  const handleActivationSuccess = () => {
-    navigate("/login");
-  };
-
   const handleCloseActivationModal = () => {
     setShowActivationModal(false);
     setFormData(initialFormData);
@@ -718,7 +714,6 @@ export default function SignUp() {
       {showActivationModal && (
         <ActivationModal
           onClose={handleCloseActivationModal}
-          onSuccess={handleActivationSuccess}
         />
       )}
     </div>

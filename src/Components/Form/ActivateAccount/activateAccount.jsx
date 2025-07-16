@@ -2,9 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { activateAccount } from "../../../Service/authService";
 import styles from "./ActivateAccount.module.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-function ActivationModal({ onClose, onSuccess }) {
+function ActivationModal({ onClose }) {
+  const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const tokenFromUrl = queryParams.get("token");
@@ -33,7 +34,7 @@ function ActivationModal({ onClose, onSuccess }) {
             "Your account has been successfully activated! You can now log in."
           );
           setTimeout(() => {
-            onSuccess();
+            navigate("/login");
           }, 2000);
         } else {
           setStatus("error");
@@ -48,7 +49,7 @@ function ActivationModal({ onClose, onSuccess }) {
         setMessage("An unexpected error occurred. Please try again later.");
       }
     },
-    [onSuccess]
+    [navigate]
   );
 
   useEffect(() => {
@@ -112,7 +113,6 @@ function ActivationModal({ onClose, onSuccess }) {
 }
 
 ActivationModal.propTypes = {
-  onSuccess: PropTypes.func,
   onClose: PropTypes.func,
 };
 
