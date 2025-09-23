@@ -5,7 +5,7 @@ import { register } from "../../../Service/authService";
 import styles from "./SignUp.module.css";
 import { Snow } from "../../snow";
 import PropTypes from "prop-types";
-import ActivationModal from "../ActivateAccount/activateAccount"; // Import the new modal component
+import ActivationModal from "../ActivateAccount/activateAccount";
 
 import {
   FaUser,
@@ -18,6 +18,7 @@ import {
   FaTimesCircle,
   FaLock,
 } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 
 const PasswordStrength = ({ password }) => {
   const getStrength = useMemo(() => {
@@ -344,10 +345,6 @@ export default function SignUp() {
     }
   };
 
-  const handleActivationSuccess = () => {
-    navigate("/login");
-  };
-
   const handleCloseActivationModal = () => {
     setShowActivationModal(false);
     setFormData(initialFormData);
@@ -374,6 +371,11 @@ export default function SignUp() {
   const toggleConfirmPasswordVisibility = () =>
     setShowConfirmPassword(!showConfirmPassword);
 
+  const handleGoogleLogin = () => {
+    window.location.href =
+      "https://go-trid-beh6ewasdrcjdphg.uaenorth-01.azurewebsites.net/api/v1/login/code/google";
+  };
+
   return (
     <div className={styles.signupPage}>
       <div className={`${styles.signupContainer} ${styles.signupLeft}`}>
@@ -384,6 +386,18 @@ export default function SignUp() {
           noValidate
         >
           <h2>Sign Up</h2>
+          <button
+            type="button"
+            className={styles.googleLoginBtn}
+            onClick={handleGoogleLogin}
+          >
+            <FcGoogle className={styles.googleIcon} />
+            Continue with Google
+          </button>
+
+          <div className={styles.divider}>
+            <span>or</span>
+          </div>
 
           {/* First Name */}
           <div className={`${styles.formGroup} ${styles.inputIcon}`}>
@@ -675,7 +689,7 @@ export default function SignUp() {
       </div>
 
       <div className={`${styles.signupContainer} ${styles.signupRight}`}>
-        <h2>Join MetaMall</h2>
+        <h2>Join Trid</h2>
         <p>
           Sign up now and start your virtual shopping journey in the worlds most
           immersive digital marketplace.
@@ -700,7 +714,6 @@ export default function SignUp() {
       {showActivationModal && (
         <ActivationModal
           onClose={handleCloseActivationModal}
-          onSuccess={handleActivationSuccess}
         />
       )}
     </div>

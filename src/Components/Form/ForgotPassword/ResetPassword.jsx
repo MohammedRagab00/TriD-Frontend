@@ -1,10 +1,14 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { resetPassword } from "../../../Service/authService";
 import styles from "./ResetPassword.module.css";
 
 function ResetPassword() {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const tokenFromUrl = queryParams.get("token");
+
   const [token, setToken] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -13,54 +17,71 @@ function ResetPassword() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (
-      password.length < 8 ||
-      !/[a-zA-Z]/.test(password) ||
-      !/[0-9]/.test(password)
-    ) {
-      setStatus("error");
-      setMessage(
-        "Password must be at least 8 characters long and include at least one letter and one number."
-      );
-      return;
-    }
-
-    if (!token) {
-      setStatus("error");
-      setMessage("Token is required");
-      return;
-    }
-
-    setStatus("submitting");
-    setMessage("");
-
-    try {
-      const { success, error, data } = await resetPassword(token, { password });
-
-      if (success) {
-        setStatus("success");
-        setMessage(
-          "Your password has been successfully reset. You can now log in with your new password."
-        );
-
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-      } else {
+  const handlePasswordReset = useCallback(
+    async (resetToken, newPassword) => {
+      if (
+        newPassword.length < 8 ||
+        !/[a-zA-Z]/.test(newPassword) ||
+        !/[0-9]/.test(newPassword)
+      ) {
         setStatus("error");
         setMessage(
-          error ||
-            "Failed to reset your password. The reset link may have expired."
+          "Password must be at least 8 characters long and include at least one letter and one number."
         );
+        return;
       }
-    } catch (error) {
-      setStatus("error");
-      setMessage("An unexpected error occurred. Please try again later.");
+
+      if (!resetToken) {
+        setStatus("error");
+        setMessage("Token is required");
+        return;
+      }
+
+      setStatus("submitting");
+      setMessage("");
+
+      try {
+        const { success, error } = await resetPassword(resetToken, {
+          password: newPassword,
+        });
+
+        if (success) {
+          setStatus("success");
+          setMessage(
+            "Your password has been successfully reset. You can now log in with your new password."
+          );
+
+          setTimeout(() => {
+            navigate("/login");
+          }, 2000);
+        } else {
+          setStatus("error");
+          setMessage(
+            error ||
+              "Failed to reset your password. The reset link may have expired."
+          );
+        }
+      } catch (error) {
+        setStatus("error");
+        setMessage("An unexpected error occurred. Please try again later.");
+      }
+    },
+    [navigate]
+  );
+
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      await handlePasswordReset(token, password);
+    },
+    [token, password, handlePasswordReset]
+  );
+
+  useEffect(() => {
+    if (tokenFromUrl) {
+      setToken(tokenFromUrl);
     }
-  };
+  }, [tokenFromUrl]);
 
   return (
     <div className={styles.resetPasswordPage}>

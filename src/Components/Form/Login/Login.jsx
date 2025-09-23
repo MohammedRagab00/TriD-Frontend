@@ -61,8 +61,8 @@ function Login() {
   };
 
   const handleGoogleLogin = () => {
-    // Redirect to Google OAuth endpoint
-    window.location.href = "https://trid-dtgpbjcyecekdea8.uaenorth-01.azurewebsites.net/api/v1/login/code/google";
+    window.location.href =
+      "https://go-trid-beh6ewasdrcjdphg.uaenorth-01.azurewebsites.net/api/v1/login/code/google";
   };
 
   return (
@@ -70,10 +70,8 @@ function Login() {
       <div className={`${styles.loginContainer} ${styles.loginLeft}`}>
         <form className={styles.loginForm} onSubmit={handleSubmit}>
           <h2>Login</h2>
-          
-          {/* Google Login Button */}
-          <button 
-            type="button" 
+          <button
+            type="button"
             className={styles.googleLoginBtn}
             onClick={handleGoogleLogin}
           >
@@ -139,7 +137,7 @@ function Login() {
       </div>
 
       <div className={`${styles.loginContainer} ${styles.loginRight}`}>
-        <h2>Welcome to MetaMall</h2>
+        <h2>Welcome to Trid</h2>
         <p>Your gateway to a virtual shopping experience.</p>
         <p>Join us today and explore the future of e-commerce.</p>
         <div className={styles.signupLink} onClick={() => navigate("/signup")}>
