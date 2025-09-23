@@ -12,7 +12,7 @@ import {
   XRLayer,
   XROrigin,
 } from '@react-three/xr'
-import { PositionalAudio, RoundedBox, useGLTF } from '@react-three/drei'
+import { OrbitControls, PositionalAudio, RoundedBox, useGLTF } from '@react-three/drei'
 import {
   OrbitHandles,
   Handle,
@@ -22,6 +22,7 @@ import {
 } from '@react-three/handle'
 import {
   forwardRef,
+  Suspense,
   useCallback,
   useEffect,
   useMemo,
@@ -48,9 +49,11 @@ import {
 } from '@pmndrs/handle'
 import { damp } from 'three/src/math/MathUtils.js'
 import { getVoidObject } from '@pmndrs/pointer-events'
-import { CopyPass, EffectComposer, RenderPass, ShaderPass } from 'postprocessing'
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline'
 import { CustomCameraControls } from '../Utils/CameraShoesShop'
+import LoadingModels from '../Utils/LoadingModels'
+
+// import '../../Assets/3D_Models/ShoesShop/DynamicObjects/Shoes1/scene'
 
 function createDefaultTransformation(x, y, z) {
   return {
@@ -111,12 +114,104 @@ export function DemoRoom() {
         </button>
       </div>
       <Canvas
-        shadows="soft"
-        camera={{ position: [-0.5, 0.5, 0.5] }}
+        // shadows="soft"
+        // camera={{ position: [-0.5, 0.5, 0.5] }}
         events={noEvents}
-        style={{ width: '100vw', flexGrow: 1, height: '100vh' }}
+        // style={{ width: '100vw', flexGrow: 1, height: '100vh' }}
+        style={{
+          width: "100vw",
+          height: "calc(100vh - 60px)",
+        }}
+        gl={{
+          antialias: true,
+          powerPreference: "high-performance",
+        }}
+        shadows="soft"
+        camera={{ position: [0.5, 0.5, 0.5] }}
       >
-        <XR store={store}>
+        <ambientLight
+          intensity={1 * 0.7}
+          color="#ffffff"
+          />
+        <pointLight
+          position={[0, 5, 0]}
+          intensity={30}
+          distance={12}
+          decay={2}
+          color="#ffffff"
+          castShadow
+          />
+        <pointLight
+          position={[3, 4, 3]}
+          intensity={15}
+          distance={8}
+          decay={2}
+          color="#ffffff"
+          />
+        <pointLight
+          position={[-3, 4, 3]}
+          intensity={15}
+          distance={8}
+          decay={2}
+          color="#ffffff"
+          />
+        <pointLight
+          position={[3, 4, -3]}
+          intensity={15}
+          distance={8}
+          decay={2}
+          color="#ffffff"
+          />
+        <pointLight
+          position={[-3, 4, -3]}
+          intensity={15}
+          distance={8}
+          decay={2}
+          color="#ffffff"
+          />
+        <spotLight
+          position={[2, 3, 0]}
+          intensity={15}
+          angle={Math.PI / 5}
+          penumbra={0.5}
+          distance={10}
+          color="#ffffff"
+          castShadow
+          />
+        <spotLight
+          position={[-2, 3, 0]}
+          intensity={15}
+          angle={Math.PI / 5}
+          penumbra={0.5}
+          distance={10}
+          color="#ffffff"
+          castShadow
+        />
+        <ambientLight intensity={0.7} position={[3,0,3]}/>
+        <directionalLight 
+          castShadow
+          position={[10, 20, 10]} 
+          intensity={1.8} 
+          shadow-mapSize-width={1024}
+          shadow-mapSize-height={1024}
+          shadow-camera-far={50}
+          shadow-camera-left={-20}
+          shadow-camera-right={20}
+          shadow-camera-top={20}
+          shadow-camera-bottom={-20}
+        />
+        {/* <OrbitControls/> */}
+        {/* <Suspense fallback={console.log('Loading')}> */}
+          <LoadingModels path={"/scene.glb"} scale={[0.1, 0.1, 0.1]}/>
+          <LoadingModels path={"../../Assets/3D_Models/ShoesShop/DynamicObjects/Shoes1/scene.glb"} scale={[0.1, 0.1, 0.1]}/>
+          <LoadingModels path={"../../Assets/3D_Models/ShoesShop/DynamicObjects/Shoes2/scene.glb"} scale={[0.1, 0.1, 0.1]}/>
+          <LoadingModels path={"../../Assets/3D_Models/ShoesShop/DynamicObjects/Shoes3/scene.glb"} scale={[0.1, 0.1, 0.1]}/>
+          <LoadingModels path={"../../Assets/3D_Models/ShoesShop/DynamicObjects/Shoes4/scene.glb"} scale={[0.1, 0.1, 0.1]}/>
+          <LoadingModels path={"../../Assets/3D_Models/ShoesShop/DynamicObjects/ShoesG/scene.glb"} scale={[5, 5, 5]}/>
+          <LoadingModels path={"../../Assets/3D_Models/ShoesShop/shop/scene.glb"} scale={[0.1, 0.1, 0.1]}/>
+          <CustomCameraControls/>
+        {/* </Suspense> */}
+        {/* <XR store={store}>
           <group pointerEventsType={{ deny: 'touch' }}>
             <AudioEffects />
             <PointerEvents />
@@ -167,39 +262,11 @@ export function DemoRoom() {
                   )}
                 </Hover>
               </Handle>
-              {/* <Handle
-                targetRef="from-context"
-                scale={{ uniform: true }}
-                multitouch={false}
-                
-                translate="as-rotate-and-scale"
-                rotate={{ x: false, z: false }}
-              >
-                <Hover>
-                  {(hovered) => (
-                    <mesh
-                      position-x={0.735}
-                      position-z={0.335}
-                      position-y={-0.05}
-                      rotation-y={Math.PI}
-                      scale={hovered ? 0.04 : 0.03}
-                    >
-                      <RotateGeometry path='lol.glb'/>
-                      <meshStandardMaterial
-                        emissiveIntensity={hovered ? 0.3 : 0}
-                        emissive={0xffffff}
-                        toneMapped={false}
-                        color="grey"
-                      />
-                    </mesh>
-                  )}
-                </Hover>
-              </Handle> */}
               <CameraHelper />
             </HandleTarget>
           </group>
         </XR>
-        <CustomCameraControls/>
+        <CustomCameraControls/> */}
       </Canvas>
     </>
   )
