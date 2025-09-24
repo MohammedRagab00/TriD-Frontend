@@ -62,7 +62,7 @@ function Login() {
 
   const handleGoogleLogin = () => {
     window.location.href =
-      "https://go-trid-beh6ewasdrcjdphg.uaenorth-01.azurewebsites.net/api/v1/login/code/google";
+      "https://trid-dtgpbjcyecekdea8.uaenorth-01.azurewebsites.net/api/v1/login/code/google";
   };
 
   return (
